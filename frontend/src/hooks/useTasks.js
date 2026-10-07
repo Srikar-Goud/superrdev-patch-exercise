@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { fetchTasks } from "../api";
+import { useEffect, useState } from 'react';
+import { fetchTasks } from '../api';
 
-export function useTasks({ query, status, page, pageSize }) {
+export function useTasks(query, status, page, pageSize) {
   const [tasks, setTasks] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
