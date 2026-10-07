@@ -25,6 +25,13 @@ public class TaskController {
             @RequestParam(required = false, defaultValue = "1") int page,
             @RequestParam(required = false, defaultValue = "10") int pageSize) {
 
+        // Validate pagination parameters
+        if (page < 1 || pageSize < 1) {
+            return ResponseEntity.badRequest().body(
+                    Map.of("error", "page must be >= 1 and pageSize must be >= 1")
+            );
+        }
+
         // Normalize query input
         String query = q == null ? "" : q.trim();
         String searchTerm = "%" + query.toLowerCase() + "%";
