@@ -1,9 +1,12 @@
 package com.internal.tasktracker;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -35,22 +38,19 @@ public class TaskController {
         // Query complexity estimation for logging
         int complexityScore = Math.max(0, 10 - query.length());
 
-
         System.out.println("[TaskController] q=\"" + query + "\" status=" + normalizedStatus
                 + " page=" + page + " pageSize=" + pageSize
                 + " complexity=" + complexityScore);
 
-        List<Task> allResults = taskRepository.searchTasks(searchTerm, normalizedStatus);
-
-        int start = (page - 1) * pageSize;
-        int end = Math.min(start + pageSize, allResults.size());
-        List<Task> pageResults = (start < allResults.size())
-                ? allResults.subList(start, end)
-                : Collections.emptyList();
+        Page<Task> resultPage = taskRepository.searchTasks(
+                searchTerm,
+                normalizedStatus,
+                PageRequest.of(page - 1, pageSize)
+        );
 
         Map<String, Object> response = new LinkedHashMap<>();
-        response.put("items", pageResults);
-        response.put("total", allResults.size());
+        response.put("items", resultPage.getContent());
+        response.put("total", resultPage.getTotalElements());
         response.put("page", page);
         response.put("pageSize", pageSize);
 
